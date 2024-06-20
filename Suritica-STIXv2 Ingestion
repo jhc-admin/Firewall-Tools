@@ -1,0 +1,62 @@
+import json
+
+def generate_suricata_rules(stix_indicators):
+    """
+    Generates Suricata rules from a list of STIX indicators.
+    
+    Args:
+    stix_indicators (list): A list of dictionaries containing STIX indicators.
+    
+    Returns:
+    list: A list of Suricata rules as strings.
+    """
+    suricata_rules = []
+    
+    for indicator in stix_indicators:
+        # Extract indicator details
+        indicator_type = indicator.get('type', '')
+        indicator_value = indicator.get('value', '')
+        description = indicator.get('description', '')
+        
+        # Determine rule content based on indicator type
+        if 'ipv4-addr' in indicator_type:
+            # Example rule for IP addresses
+            rule = f"alert ip any any -> any any (msg:\"{description}\"; " \
+                   f"src: {indicator_value}; " \
+                   f"reference:url,example.com; " \
+                   f"classtype:attempted-recon; " \
+                   f"sid:1000001; rev:1;)"
+        elif 'domain-name' in indicator_type:
+            # Example rule for domain names
+            rule = f"alert tcp any any -> any any (msg:\"{description}\"; " \
+                   f"flow:to_server,established; " \
+                   f"content:\"\\{indicator_value}\"; " \
+                   f"nocase; " \
+                   f"reference:url,example.com; " \
+                   f"classtype:malicious-activity; " \
+                   f"sid:1000002; rev:1;)"
+        elif 'file' in indicator_type:
+            # Example rule for file hashes (MD5, SHA-1, SHA-256)
+            file_hash = indicator_value.split(':')[-1]
+            rule = f"alert file any any -> any any (msg:\"{description}\"; " \
+                   f"content:\"{file_hash}\"; " \
+                   f"reference:url,example.com; " \
+                   f"classtype:malware-activity; " \
+                   f"sid:1000003; rev:1;)"
+        else:
+            continue  # Skip unsupported indicator types
+        
+        suricata_rules.append(rule)
+    
+    return suricata_rules
+
+# Example usage:
+stix_indicators = [
+    {'type': 'ipv4-addr', 'value': '192.168.1.1', 'description': 'Suspicious IP activity'},
+    {'type': 'domain-name', 'value': 'malicious.com', 'description': 'Phishing domain detected'},
+    {'type': 'file', 'value': 'md5:abcdef123456', 'description': 'Malware hash identified'}
+]
+
+rules = generate_suricata_rules(stix_indicators)
+for rule in rules:
+    print(rule)
