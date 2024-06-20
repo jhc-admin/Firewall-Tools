@@ -60,3 +60,5 @@ stix_indicators = [
 rules = generate_suricata_rules(stix_indicators)
 for rule in rules:
     print(rule)
+
+
