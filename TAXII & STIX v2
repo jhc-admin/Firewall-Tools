@@ -1,0 +1,3 @@
+TAXII: TAXII is a protocol for exchanging cyber threat intelligence. It defines how data is packaged and transferred between systems.
+
+STIX v2: STIX is a structured language for describing cyber threat information. It includes details about threats, incidents, and indicators of compromise (IOCs).
