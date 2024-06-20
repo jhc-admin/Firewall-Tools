@@ -1,0 +1,8 @@
+import requests
+
+def connect_to_taxii_server(url, headers):
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        raise Exception("Failed to connect to TAXII server")
